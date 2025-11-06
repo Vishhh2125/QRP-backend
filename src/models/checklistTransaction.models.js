@@ -33,7 +33,7 @@ const checklistTransactionSchema = new mongoose.Schema({
             'APPROVED'              // Reviewer approves
         ]
     },
-
+    
     /**
      * A human-readable sentence of what happened.
      * Example: "Jane Smith approved the checklist."
