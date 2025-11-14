@@ -8,10 +8,10 @@ import {
 
 const router = express.Router();
 
-// Project membership routes
-router.get("/members", getProjectMembers);           // GET /api/v1/projects/members
-router.post("/members", addProjectMember);           // POST /api/v1/projects/members  
-router.put("/members", updateProjectMember);         // PUT /api/v1/projects/members
-router.delete("/members", removeProjectMember);      // DELETE /api/v1/projects/members
+// Project membership routes with :id parameters
+router.get("/:id/members", getProjectMembers);           // GET /api/v1/projects-membership/:id/members
+router.post("/:id/members", addProjectMember);           // POST /api/v1/projects-membership/:id/members  
+router.put("/:id/members/:userId", updateProjectMember); // PUT /api/v1/projects-membership/:id/members/:userId
+router.delete("/:id/members/:userId", removeProjectMember); // DELETE /api/v1/projects-membership/:id/members/:userId
 
 export default router;

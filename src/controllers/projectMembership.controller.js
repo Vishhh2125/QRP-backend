@@ -6,10 +6,12 @@ import { Role } from '../models/roles.models.js';
 // GET /api/v1/projects/members - Get project members
 export const getProjectMembers = async (req, res) => {
     try {
-        const { project_id } = req.body;
+        const { id } = req.params; // ✅ Get project_id from URL parameter
+        
+        console.log('Project ID from params:', id); // Add this debug line
         
         // Check if project exists
-        const project = await Project.findById(project_id);
+        const project = await Project.findById(id);
         if (!project) {
             return res.status(404).json({
                 success: false,
@@ -17,7 +19,7 @@ export const getProjectMembers = async (req, res) => {
             });
         }
 
-        const members = await ProjectMembership.find({ project_id: project_id })
+        const members = await ProjectMembership.find({ project_id: id })
             .populate('user_id', 'name email role')
             .populate('role', 'role_name description');
 
@@ -29,6 +31,7 @@ export const getProjectMembers = async (req, res) => {
             }
         });
     } catch (error) {
+        console.error('Error in getProjectMembers:', error); // Add this debug line
         res.status(500).json({
             success: false,
             message: error.message

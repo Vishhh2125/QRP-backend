@@ -1,6 +1,7 @@
 import express from "express"
 import cookieParser from "cookie-parser"
 import cors from "cors"
+import morgan from "morgan"
 const app=express()
 
 
@@ -9,7 +10,7 @@ app.use(cors({
     credentials:true
 })
 )
-
+app.use(morgan("dev"))
 app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended:true,limit:"16kb"}))
 
@@ -27,6 +28,6 @@ import projectMembershipRoutes from './routes/projectMembership.routes.js';
 app.use("/api/v1/users",userRouter)
 app.use('/api/v1/roles', roleRoutes);
 app.use('/api/v1/projects', projectRoutes);
-app.use('/api/v1/projects', projectMembershipRoutes);
+app.use('/api/v1/projects-membership', projectMembershipRoutes);
 
 export {app}
