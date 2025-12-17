@@ -66,6 +66,8 @@ const loginUser = asyncHandler(async (req, res) => {
   user.accessToken = accessToken;
   await user.save();
 
+  console.log(accessToken)
+
   const options = {
     httpOnly: true,
     secure: false

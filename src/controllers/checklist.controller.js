@@ -451,17 +451,17 @@ const requestChanges = asyncHandler(async (req, res) => {
 /* =====================================================
    GET CHECKLIST HISTORY
 ===================================================== */
-const getChecklistHistory = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+// const getChecklistHistory = asyncHandler(async (req, res) => {
+//   const { id } = req.params;
 
-  const history = await ChecklistHistory.find({ checklist_id: id })
-    .populate("user_id", "name email")
-    .sort({ createdAt: 1 });
+//   const history = await ChecklistHistory.find({ checklist_id: id })
+//     .populate("user_id", "name email")
+//     .sort({ createdAt: 1 });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, history, "Checklist history fetched successfully"));
-});
+//   return res
+//     .status(200)
+//     .json(new ApiResponse(200, history, "Checklist history fetched successfully"));
+// });
 
 /* =====================================================
    GET ALL CHECKLISTS
@@ -488,5 +488,5 @@ export {
   submitChecklist,
   approveChecklist,
   requestChanges,
-  getChecklistHistory,
+  // getChecklistHistory,
 };
