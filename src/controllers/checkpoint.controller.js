@@ -1,4 +1,5 @@
 import CheckPoint from "../models/checkpoint.model.js";
+import mongoose from "mongoose";
 
 import Checklist from "../models/checklist.models.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -97,40 +98,57 @@ const deleteCheckPoint = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, null, "Checkpoint deleted successfully"));
 });
-const getCheckPointById = asyncHandler(async (req, res) => {
-  const { checkpointId } = req.params;
 
-  const checkpoint = await CheckPoint.findById(checkpointId);
-  if (!checkpoint) {
-    throw new ApiError(404, "Checkpoint not found");
-  }
 
-  return res.status(200).json(
-    new ApiResponse(200, checkpoint, "Checkpoint fetched successfully")
-  );
-});
-
-const getCheckpointsByChecklist = asyncHandler(async (req, res) => {
+/* =====================================================
+   GET CHECKPOINTS BY CHECKLIST ID (WITHOUT IMAGES)
+===================================================== */
+const getCheckpointsByChecklistId = asyncHandler(async (req, res) => {
   const { checkListId } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(checkListId)) {
-    throw new ApiError(400, "Invalid checklistId");
+  if (!mongoose.isValidObjectId(checkListId)) {
+    throw new ApiError(400, "Invalid checklist id");
   }
 
-  const checklist = await Checklist.findById(checkListId).select("_id");
-  if (!checklist) throw new ApiError(404, "Checklist not found");
-
-  const checkpoints = await CheckPoint.find({ checklistId }).sort({ createdAt: 1 });
+  // ✅ Exclude images from both executor and reviewer responses
+  const checkpoints = await CheckPoint.find({ checklistId: checkListId })
+    .select('-executorResponse.images -reviewerResponse.images')
+    .sort({ createdAt: 1 });
 
   return res
     .status(200)
     .json(new ApiResponse(200, checkpoints, "Checkpoints fetched successfully"));
 });
 
+/* =====================================================
+   GET CHECKPOINT BY ID (WITHOUT IMAGES)
+===================================================== */
+const getCheckPointById = asyncHandler(async (req, res) => {
+  const { checkpointId } = req.params;
+
+  if (!mongoose.isValidObjectId(checkpointId)) {
+    throw new ApiError(400, "Invalid checkpoint id");
+  }
+
+  // ✅ Exclude images
+  const checkpoint = await CheckPoint.findById(checkpointId)
+    .select('-executorResponse.images -reviewerResponse.images');
+
+  if (!checkpoint) {
+    throw new ApiError(404, "Checkpoint not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, checkpoint, "Checkpoint fetched successfully"));
+});
+
+// Update export
 export {
   createCheckPoint,
+  getCheckpointsByChecklistId, // Add this
   updateCheckpointResponse,
   deleteCheckPoint,
     getCheckPointById,
-    getCheckpointsByChecklist
+    
 };
