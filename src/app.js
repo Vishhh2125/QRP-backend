@@ -19,7 +19,8 @@ app.use(express.urlencoded({extended:true,limit:"16kb"}))
 app.use(cookieParser())
 
 // //routes
-// import userRouter from "./routes/user.routes.js"
+import userRouter from "./routes/user.routes.js"
+import errorHandler  from "./middleware/errorHandler.js";
 // import roleRoutes from './routes/role.routes.js';
 // import projectRoutes from './routes/project.routes.js';
 // import projectMembershipRoutes from './routes/projectMembership.routes.js';
@@ -30,7 +31,7 @@ app.use(cookieParser())
 // //routes declaration
 // app.use("/api/v1",stageRouter)
 // app.use('/api/v1', checklistRoutes);
-// app.use("/api/v1/users",userRouter)
+app.use("/api/v1/users",userRouter)
 // app.use('/api/v1/roles', roleRoutes);
 // app.use("/api/v1/checkpoint",checkPointRoutes);
 // app.use("/app/v1/template",templateRoutes);
@@ -38,6 +39,28 @@ app.use(cookieParser())
 // app.use('/api/v1/projects-membership', projectMembershipRoutes);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//keep erro handler at last 
+
+app.use(errorHandler);
 
 
 

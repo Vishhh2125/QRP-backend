@@ -60,36 +60,50 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  console.log(req.body);
 
-  if (!email || !password) {
-    throw new ApiError(400, "Email and password are required");
-  }
+  if (!email) throw new ApiError(400, "Email is required");
+  if (!password) throw new ApiError(400, "Password is required");
 
-  const user = await User.findOne({ email });
-  if (!user) throw new ApiError(404, "User not found");
+  const existedUser = await User.findOne({ email });
 
-  const isPasswordValid = await user.isPasswordCorrect(password);
-  if (!isPasswordValid) throw new ApiError(404, "Invalid credentials");
+  if (!existedUser) throw new ApiError(400, "User not found with this email");
 
-  // Generate new token and save (invalidate previous)
-  const accessToken = user.generateAccessToken(user._id);
-  user.accessToken = accessToken;
-  await user.save();
+  const passwordMatch = await existedUser.isPasswordCorrect(password);
 
-  console.log(accessToken)
+  if (!passwordMatch) throw new ApiError(400, "Invalid password");
+
+  // Generate both tokens
+  const accessToken = await existedUser.generateAccessToken();
+  const refreshToken = await existedUser.generateRefreshToken();
+
+  // Save refreshToken to database
+  existedUser.refreshToken = refreshToken;
+  await existedUser.save({ validateBeforeSave: false });
+
+  // Get safe user without password and tokens
+  const safeUser = await User.findById(existedUser._id)
+    .select("-password -refreshToken");
 
   const options = {
     httpOnly: true,
-    secure: false
-  }
-
-  const loggedUser = await User.findById(user._id)
-    .select("-password -accessToken");
+    secure: false, // Set to true if using HTTPS
+  };
 
   return res
     .status(200)
-    .cookie("token", accessToken, options)
-    .json(new ApiResponse(200, loggedUser, "User logged in successfully"));
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          user: safeUser,
+          accessToken,
+         
+        },
+        "User logged in successfully"
+      )
+    );
 });
 
 
@@ -98,7 +112,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   if (!userId) throw new ApiError(401, "Unauthorized");
 
-  await User.findByIdAndUpdate(userId, { accessToken: null });
+  // Clear refreshToken from database
+  await User.findByIdAndUpdate(userId, { refreshToken: null }, { new: true });
 
   const options = {
     httpOnly: true,
@@ -107,7 +122,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .clearCookie("token", options)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged out successfully"));
 });
 
