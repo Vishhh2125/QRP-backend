@@ -45,22 +45,6 @@ export const getTemplate = asyncHandler(async (req, res) => {
 });
 
 /**
- * GET SINGLE TEMPLATE
- */
-export const getTemplateById = asyncHandler(async (req, res) => {
-  const { templateId } = req.params;
-
-  const template = await Template.findById(templateId);
-  if (!template) {
-    throw new ApiError(404, "Template not found");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, template, "Template fetched successfully"));
-});
-
-/**
  * ADD STAGE
  */
 export const addStage = asyncHandler(async (req, res) => {
@@ -162,37 +146,6 @@ export const addCheckpoint = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, template, "Checkpoint added successfully"));
 });
 
-export const updateSubtopic = asyncHandler(async (req, res) => {
-  const { templateId, stageIndex, subTopicIndex } = req.params;
-
-  const { subTopic } = req.body;
-
-  if (!subTopic) {
-    throw new ApiError(400, "subTopic is required");
-  }
-
-  const template = await Template.findById(templateId);
-  if (!template) {
-    throw new ApiError(404, "Template not found");
-  }
-
-  if (stageIndex < 0 || stageIndex >= template.stages.length) {
-    throw new ApiError(400, "Invalid stage index");
-  }
-
-  if (subTopicIndex < 0 || subTopicIndex >= template.stages[stageIndex].subTopics.length) {
-    throw new ApiError(400, "Invalid subTopic index");
-  }
-
-  template.stages[stageIndex].subTopics[subTopicIndex].subTopic = subTopic;
-
-  await template.save();
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, template, "SubTopic updated successfully"));
-});
-
 export const deleteSubtopic = asyncHandler(async (req, res) => {
   const { templateId, stageIndex, subTopicIndex } = req.params;
 
@@ -216,41 +169,6 @@ export const deleteSubtopic = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, template, "SubTopic deleted successfully"));
-});
-
-export const updateCheckpoint = asyncHandler(async (req, res) => {
-  const { templateId, stageIndex, subTopicIndex, checkpointIndex } = req.params;
-  const { checkpoint } = req.body;
-
-  if (!checkpoint) {
-    throw new ApiError(400, "Checkpoint is required");
-  }
-
-  const template = await Template.findById(templateId);
-  if (!template) {
-    throw new ApiError(404, "Template not found");
-  }
-
-  const stage = template.stages[stageIndex];
-  if (!stage) {
-    throw new ApiError(400, "Invalid stage index");
-  }
-
-  const subTopic = stage.subTopics[subTopicIndex];
-  if (!subTopic) {
-    throw new ApiError(400, "Invalid subTopic index");
-  }
-
-  if (checkpointIndex < 0 || checkpointIndex >= subTopic.checkpoints.length) {
-    throw new ApiError(400, "Invalid checkpoint index");
-  }
-  subTopic.checkpoints[checkpointIndex] = checkpoint;
-
-  await template.save();
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, template, "Checkpoint updated successfully"));
 });
 
 export const deleteCheckpoint = asyncHandler(async (req, res) => {

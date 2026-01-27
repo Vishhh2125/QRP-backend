@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import Stage from "../models/stage.models.js";
+import Project from "../models/project.models.js";
 
 const listStagesForProject = asyncHandler(async (req, res) => {
   const { projectId } = req.params;
@@ -34,9 +35,10 @@ const getStageById = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, stage, "Stage fetched successfully"));
 });
+
 const createStage = asyncHandler(async (req, res) => {
     const { projectId } = req.params;
-    const { stage_name, description, status } = req.body;
+    const { stage_name } = req.body;
   
     if (!mongoose.isValidObjectId(projectId)) {
       throw new ApiError(400, "Invalid projectId");
@@ -44,6 +46,21 @@ const createStage = asyncHandler(async (req, res) => {
   
     if (!stage_name?.trim()) {
       throw new ApiError(400, "stage_name is required");
+    }
+  
+    // Check if project exists
+    const project = await Project.findById(projectId);
+    if (!project) {
+      throw new ApiError(404, "Project not found");
+    }
+  
+    // Check if stage with same name already exists for this project
+    const existingStage = await Stage.findOne({
+      project_id: projectId,
+      stage_name: stage_name.trim()
+    });
+    if (existingStage) {
+      throw new ApiError(409, "Stage with this name already exists in the project");
     }
   
     // created_by is required by the model; must be authenticated
@@ -55,9 +72,9 @@ const createStage = asyncHandler(async (req, res) => {
     const stage = await Stage.create({
       project_id: projectId,
       stage_name,
-      description,
-      status, // optional; defaults to 'pending' if not provided
-      created_by
+      status: "not_started", // default status
+      created_by,
+      revision_number: 0 // default revision number
     });
   
     return res
@@ -66,7 +83,7 @@ const createStage = asyncHandler(async (req, res) => {
   });
   const updateStage = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { stage_name, description, status } = req.body;
+    const { stage_name, status } = req.body;
   
     if (!mongoose.isValidObjectId(id)) {
       throw new ApiError(400, "Invalid stage id");
@@ -75,7 +92,6 @@ const createStage = asyncHandler(async (req, res) => {
     // Only allow updating permitted fields
     const update = {};
     if (typeof stage_name === "string") update.stage_name = stage_name;
-    if (typeof description === "string") update.description = description;
     if (typeof status === "string") update.status = status;
   
     if (Object.keys(update).length === 0) {
