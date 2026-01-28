@@ -1,36 +1,7 @@
 import mongoose from "mongoose";
 // import SubTopic from "./subtopic.models.js";
 
-
-
-const checkpointSchema = new mongoose.Schema(
-  {
-    SubTopic: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "SubTopic",
-      required: true,
-    }, 
-  question: {
-    type: String,
-    required: true,
-  },
-  current_status: {
-  type: String,
-  enum: ["PENDING", "APPROVED", "CHANGES_REQUIRED"],
-  required: true
-},
-
-  executorResponse: responseSchema,
-  reviewerResponse: responseSchema,
-
-},
-  { timestamps: true }
-);
-
-
-const CheckPoint =mongoose.model("Checkpoint", checkpointSchema);
-
-
+// Define responseSchema FIRST before using it
 const responseSchema = new mongoose.Schema({
   answer: {
     type: Boolean,      
@@ -58,4 +29,31 @@ const responseSchema = new mongoose.Schema({
     type: Date,
   },
 });
+
+const checkpointSchema = new mongoose.Schema(
+  {
+    SubTopic: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubTopic",
+      required: true,
+    }, 
+  question: {
+    type: String,
+    required: true,
+  },
+  current_status: {
+  type: String,
+  enum: ["PENDING", "APPROVED", "CHANGES_REQUIRED"],
+  required: true
+},
+
+  executorResponse: responseSchema,
+  reviewerResponse: responseSchema,
+
+},
+  { timestamps: true }
+);
+
+
+const CheckPoint =mongoose.model("Checkpoint", checkpointSchema);
 export default CheckPoint;

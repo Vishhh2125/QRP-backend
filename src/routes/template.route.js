@@ -36,14 +36,14 @@ router.post(
   "/:templateId/stages/:stageId/subtopics",
   authMiddleware,
   addSubtopic
-);                                                           // POST /api/templates/:templateId/stages/:stageIndex/subtopics
+);                                                           // POST /api/v1/template/:templateId/stages/:stageId/subtopics
 
 // Delete a subtopic from a specific stage
 router.delete(
-  "/:templateId/stages/:stageIndex/subtopics/:subTopicIndex",
+  "/:templateId/stages/:stageId/subtopics/:subTopicId",
   authMiddleware,
   deleteSubtopic
-);                                                           // DELETE /api/templates/:templateId/stages/:stageIndex/subtopics/:subTopicIndex
+);                                                           // DELETE /api/v1/template/:templateId/stages/:stageId/subtopics/:subTopicId
 
 /**
  * Checkpoint Routes
@@ -53,13 +53,13 @@ router.post(
   "/:templateId/stages/:stageId/subtopics/:subTopicId/checkpoints",
   authMiddleware,
   addCheckpoint
-);                                                           // POST /api/templates/:templateId/stages/:stageIndex/subtopics/:subTopicIndex/checkpoints
+);                                                           // POST /api/v1/template/:templateId/stages/:stageId/subtopics/:subTopicId/checkpoints
 
 // Delete a checkpoint from a specific subtopic
 router.delete(
-  "/:templateId/stages/:stageIndex/subtopics/:subTopicIndex/checkpoints/:checkpointIndex",
+  "/:templateId/stages/:stageId/subtopics/:subTopicId/checkpoints/:checkpointId",
   authMiddleware,
   deleteCheckpoint
-);                                                           // DELETE /api/templates/:templateId/stages/:stageIndex/subtopics/:subTopicIndex/checkpoints/:checkpointIndex
+);                                                           // DELETE /api/v1/template/:templateId/stages/:stageId/subtopics/:subTopicId/checkpoints/:checkpointId
 
 export default router;

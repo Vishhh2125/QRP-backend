@@ -5,7 +5,7 @@ import {
   createProject,
   updateProject,
   deleteProject,
-  // startProject
+  startProject
 } from "../controllers/project.controller.js";
 import verifyJWT from "../middleware/auth.Middleware.js";
 
@@ -16,11 +16,6 @@ router.get("/:id", getProjectById);
 router.post("/", verifyJWT, createProject);
 router.put("/:id", verifyJWT, updateProject);
 router.delete("/:id", verifyJWT, deleteProject);
- 
-
-
-//start the project 
-
-// router.post("/:id/start", verifyJWT,)
+router.post("/:id/start", verifyJWT, startProject);
 
 export default router;
