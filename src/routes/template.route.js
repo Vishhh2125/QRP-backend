@@ -6,10 +6,8 @@ import {
   getTemplate,
   addStage,
   addSubtopic,
-  updateSubtopic,
   deleteSubtopic,
   addCheckpoint,
-  updateCheckpoint,
   deleteCheckpoint,
 } from "../controllers/template.controller.js";
 
@@ -18,29 +16,29 @@ const router = Router();
 /**
  * Template Routes (Only ONE template in system)
  */
+// Create a new template
 router.post("/", authMiddleware, createTemplate);           // POST /api/templates
+
+// Get the template
 router.get("/", authMiddleware, getTemplate);              // GET /api/templates
 
 /**
  * Stage Routes
  */
+// Add a stage to the template
 router.post("/:templateId/stages", authMiddleware, addStage);  // POST /api/templates/:templateId/stages
 
 /**
  * SubTopic Routes
  */
+// Add a subtopic to a specific stage
 router.post(
   "/:templateId/stages/:stageIndex/subtopics",
   authMiddleware,
   addSubtopic
 );                                                           // POST /api/templates/:templateId/stages/:stageIndex/subtopics
 
-router.patch(
-  "/:templateId/stages/:stageIndex/subtopics/:subTopicIndex",
-  authMiddleware,
-  updateSubtopic
-);                                                           // PATCH /api/templates/:templateId/stages/:stageIndex/subtopics/:subTopicIndex
-
+// Delete a subtopic from a specific stage
 router.delete(
   "/:templateId/stages/:stageIndex/subtopics/:subTopicIndex",
   authMiddleware,
@@ -50,18 +48,14 @@ router.delete(
 /**
  * Checkpoint Routes
  */
+// Add a checkpoint to a specific subtopic
 router.post(
   "/:templateId/stages/:stageIndex/subtopics/:subTopicIndex/checkpoints",
   authMiddleware,
   addCheckpoint
 );                                                           // POST /api/templates/:templateId/stages/:stageIndex/subtopics/:subTopicIndex/checkpoints
 
-router.patch(
-  "/:templateId/stages/:stageIndex/subtopics/:subTopicIndex/checkpoints/:checkpointIndex",
-  authMiddleware,
-  updateCheckpoint
-);                                                           // PATCH /api/templates/:templateId/stages/:stageIndex/subtopics/:subTopicIndex/checkpoints/:checkpointIndex
-
+// Delete a checkpoint from a specific subtopic
 router.delete(
   "/:templateId/stages/:stageIndex/subtopics/:subTopicIndex/checkpoints/:checkpointIndex",
   authMiddleware,

@@ -4,15 +4,23 @@ import {
   getProjectById,
   createProject,
   updateProject,
-  deleteProject
+  deleteProject,
+  // startProject
 } from "../controllers/project.controller.js";
+import verifyJWT from "../middleware/auth.Middleware.js";
 
 const router = express.Router();
 
-router.get("/", getAllProjects);
+router.get("/",verifyJWT, getAllProjects);
 router.get("/:id", getProjectById);
-router.post("/", createProject);
-router.put("/:id", updateProject);
-router.delete("/:id", deleteProject);
+router.post("/", verifyJWT, createProject);
+router.put("/:id", verifyJWT, updateProject);
+router.delete("/:id", verifyJWT, deleteProject);
+ 
+
+
+//start the project 
+
+// router.post("/:id/start", verifyJWT,)
 
 export default router;

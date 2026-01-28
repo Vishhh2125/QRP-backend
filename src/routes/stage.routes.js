@@ -4,9 +4,9 @@ import { getStageById, updateStage, deleteStage, listStagesForProject, createSta
 
 const router = express.Router();
 
-router.get("/stages/:id", getStageById);
-router.put("/stages/:id", updateStage);
-router.delete("/stages/:id", deleteStage);
+router.get("/:id", getStageById);
+router.put("/:id", updateStage);
+router.delete("/:id", deleteStage);
 
 // Moved from project.routes.js:
 // GET/POST /api/v1/projects/:projectId/stages (protected)
